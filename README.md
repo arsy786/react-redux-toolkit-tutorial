@@ -39,7 +39,7 @@ export const store = configureStore({
     counter: counterReducer,
   },
 });
-/*
+*/
 ```
 
 3. Create a reducer that handles the state changes for a particular feature of your application. A reducer is a pure function that takes the current state and an action object, and returns the new state. You can use the createSlice function from Redux Toolkit to create a reducer with a predefined structure. Here's an example of creating a counter reducer using createSlice:
