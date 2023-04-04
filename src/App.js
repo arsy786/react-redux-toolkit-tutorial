@@ -1,15 +1,26 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { decrement, increment, incrementBy, reset } from "./redux/counter";
 
 const App = () => {
-	const [count, setCount] = React.useState(0);
+	const count = useSelector((state) => state.counter.count);
+	const dispatch = useDispatch();
+
+	const handleReset = () => {
+		dispatch(reset());
+	};
+
+	const handleIncrementBy = (amount) => {
+		dispatch(incrementBy(amount));
+	};
 
 	return (
 		<div>
 			<h1>The count is: {count}</h1>
-			<button onClick={() => setCount(count + 1)}>increment</button>
-			<button onClick={() => setCount(count - 1)}>decrement</button>
-			<button onClick={() => setCount(0)}>reset</button>
-			<button onClick={() => setCount(count + 5)}>increment by 5</button>
+			<button onClick={() => dispatch(increment())}>increment</button>
+			<button onClick={() => dispatch(decrement())}>decrement</button>
+			<button onClick={handleReset}>reset</button>
+			<button onClick={() => handleIncrementBy(5)}>increment by 5</button>
 		</div>
 	);
 };
