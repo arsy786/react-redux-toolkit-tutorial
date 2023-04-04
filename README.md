@@ -1,70 +1,131 @@
-# Getting Started with Create React App
+# React Redux Toolkit Tutorial
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React Redux is a popular library for managing the state of React applications. Redux Toolkit is a set of tools and utilities that simplify the process of building Redux applications.
 
-## Available Scripts
+Here's a step-by-step guide on how to use React Redux (Toolkit):
 
-In the project directory, you can run:
+1. Install the required dependencies:
 
-### `npm start`
+```bash
+npm install react-redux redux @reduxjs/toolkit
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+2. Create a Redux store using configureStore function from Redux Toolkit. This function takes an object with the following properties:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- reducer: a function that combines all the reducers into a single reducer
+- middleware: an array of middleware functions (optional)
+- devTools: a boolean that enables the Redux DevTools browser extension (optional)
 
-### `npm test`
+Here's an example of creating a Redux store:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```js
+// store.js
+import { configureStore } from "@reduxjs/toolkit";
+import rootReducer from "./reducers";
 
-### `npm run build`
+const store = configureStore({
+	reducer: rootReducer,
+	devTools: true,
+});
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+export default store;
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+/* Alternatively:
+import { configureStore } from '@reduxjs/toolkit';
+import counterReducer from './counterSlice';
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+export const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+  },
+});
+/*
+```
 
-### `npm run eject`
+3. Create a reducer that handles the state changes for a particular feature of your application. A reducer is a pure function that takes the current state and an action object, and returns the new state. You can use the createSlice function from Redux Toolkit to create a reducer with a predefined structure. Here's an example of creating a counter reducer using createSlice:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```js
+// counter.js
+import { createSlice } from "@reduxjs/toolkit";
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+const counterSlice = createSlice({
+	name: "counter",
+	initialState: 0,
+	reducers: {
+		increment: (state) => {
+			state.value += 1;
+		},
+		decrement: (state) => {
+			state.value -= 1;
+		},
+		reset: (state) => {
+			state.value = 0;
+		},
+		incrementByAmount: (state, action) => {
+			state.value += action.payload;
+		},
+	},
+});
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+export const { increment, decrement, reset, incrementByAmount } =
+	counterSlice.actions;
+export default counterSlice.reducer;
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+in this example, createSlice creates a reducer with the name counter, an initial state of 0, and two action creators: increment and decrement. The increment action creator increments the state by 1, and the decrement action creator decrements the state by 1.
 
-## Learn More
+4. Create a component that uses the Redux store. You can use the useSelector hook from react-redux to access the state values from the store, and the useDispatch hook to dispatch actions to the store. Here's an example of a component that uses the counter slice we defined earlier:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```js
+// App.js
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { increment, decrement } from "./counterSlice";
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+function App() {
+	const count = useSelector((state) => state.counter);
+	const dispatch = useDispatch();
 
-### Code Splitting
+	const handleReset = () => {
+		dispatch(reset());
+	};
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+	const handleIncrementByAmount = (amount: number) => {
+		dispatch(incrementByAmount(amount));
+	};
 
-### Analyzing the Bundle Size
+	return (
+		<div>
+			<h1>{count}</h1>
+			<button onClick={() => dispatch(increment())}>+</button>
+			<button onClick={() => dispatch(decrement())}>-</button>
+			<button onClick={handleReset}>Reset</button>
+			<button onClick={() => handleIncrementByAmount(5)}>Increment by 5</button>
+		</div>
+	);
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+export default App;
+```
 
-### Making a Progressive Web App
+In this example, we use the useSelector hook to access the counter state value from the store, and the useDispatch hook to dispatch the increment and decrement actions when the corresponding buttons are clicked.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+5. Wrap your root component with the Provider component from react-redux. This makes the Redux store available to all the components in your application. Here's an example:
 
-### Advanced Configuration
+```js
+// index.js
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import store from "./store";
+import App from "./App";
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+	<React.StrictMode>
+		<Provider store={store}>
+			<App />
+		</Provider>
+	</React.StrictMode>
+);
+```
